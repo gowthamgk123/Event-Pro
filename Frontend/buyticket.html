@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buy Ticket</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(35, 78, 108, 0.2);
+      backdrop-filter: blur(18px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      color: #e0f7ff;
+      width: 360px;
+      animation: fadeIn 1s ease-in-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: #c0e8ff;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.12);
+      color: #e0f7ff;
+      font-size: 16px;
+      margin-bottom: 20px;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position-x: 98%;
+      background-position-y: center;
+    }
+
+    .payment-options label {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      cursor: pointer;
+      font-size: 15px;
+      transition: color 0.3s;
+    }
+
+    .payment-options input[type="radio"] {
+      accent-color: #00ccff;
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .btn {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #00ccff, #006aff);
+      border: none;
+      border-radius: 30px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #0099dd, #004cbf);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 204, 255, 0.5);
+    }
+
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      color: #aefeff;
+      font-weight: bold;
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        width: 90%;
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎟️ Buy Your Ticket</h2>
+
+  <label for="event">Choose an Event:</label>
+  <select id="event">
+    <option value="">-- Select an Event --</option>
+    <option value="concert">🎵 Music Concert</option>
+    <option value="sports">🏟️ Sports Match</option>
+    <option value="theatre">🎭 Theatre Show</option>
+    <option value="tech">💻 Tech Conference</option>
+  </select>
+
+  <label>Choose Payment Method:</label>
+  <div class="payment-options">
+    <label><input type="radio" name="payment" value="UPI"> UPI</label>
+    <label><input type="radio" name="payment" value="Card"> Credit/Debit Card</label>
+    <label><input type="radio" name="payment" value="PayPal"> PayPal</label>
+  </div>
+
+  <button class="btn" onclick="submitForm()">Confirm & Pay</button>
+  <div class="message" id="message"></div>
+</div>
+
+<script>
+  function submitForm() {
+    const event = document.getElementById('event').value;
+    const paymentMethod = document.querySelector('input[name="payment"]:checked');
+    const messageBox = document.getElementById('message');
+
+    if (!event) {
+      messageBox.innerText = "⚠️ Please select an event.";
+      messageBox.style.color = "#ffcc00";
+      return;
+    }
+
+    if (!paymentMethod) {
+      messageBox.innerText = "⚠️ Please select a payment method.";
+      messageBox.style.color = "#ffcc00";
+      return;
+    }
+
+    messageBox.innerText = `✅ Ticket for "${event}" booked via ${paymentMethod.value}!`;
+    messageBox.style.color = "#aefeff";
+  }
+</script>
+
+</body>
+</html>

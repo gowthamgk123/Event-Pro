@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event - EventPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">EventPro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="index.html#events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="smart-ticketing.html">Tickets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link active ms-2" href="createEvent.html">Create Event</a></li>
+                    <li class="nav-item"><a class="nav-link ms-2" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link ms-2" href="signup.html">Sign Up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Create Event Form -->
+    <div class="container py-5 mt-5">
+        <h2 class="text-center mb-4">Create New Event</h2>
+        <form id="eventForm" class="needs-validation" novalidate>
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-info-circle me-2"></i>Basic Information</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Event Name*</label>
+                        <input type="text" name="eventName" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Start Date*</label>
+                        <input type="date" name="startDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">End Date*</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Start Time*</label>
+                        <input type="time" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">End Time*</label>
+                        <input type="time" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Details -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-map-marker-alt me-2"></i>Location Details</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Venue Name*</label>
+                        <input type="text" name="venueName" class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address*</label>
+                        <input type="text" name="address" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">City*</label>
+                        <input type="text" name="city" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">State*</label>
+                        <input type="text" name="state" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">ZIP Code*</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Details -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-calendar-alt me-2"></i>Event Details</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Description*</label>
+                        <textarea name="description" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Event Type*</label>
+                        <select name="eventType" class="form-select" required>
+                            <option value="">Choose...</option>
+                            <option>Conference</option>
+                            <option>Workshop</option>
+                            <option>Seminar</option>
+                            <option>Concert</option>
+                            <option>Exhibition</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category*</label>
+                        <select name="category" class="form-select" required>
+                            <option value="">Choose...</option>
+                            <option value="Business">Business</option>
+                            <option value="Tech">Technology</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Music">Music</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticketing -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-ticket-alt me-2"></i>Ticketing</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ticket Type*</label>
+                        <select name="ticketType" class="form-select" required>
+                            <option value="">Choose...</option>
+                            <option value="free">Free</option>
+                            <option value="paid">Paid</option>
+                            <option value="donation">Donation</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Price (if paid)*</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" name="price" class="form-control" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Total Tickets Available*</label>
+                        <input type="number" name="totalTickets" class="form-control" min="1" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Maximum Tickets per Person</label>
+                        <input type="number" name="maxTicketsPerPerson" class="form-control" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-image me-2"></i>Media</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Event Banner</label>
+                        <input type="file" class="form-control" accept="image/*">
+                        <div id="imagePreview" class="preview-image"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Options -->
+            <div class="form-section">
+                <h4 class="mb-3"><i class="fas fa-cog me-2"></i>Additional Options</h4>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="virtualEvent">
+                            <label class="form-check-label" for="virtualEvent">This is a virtual event</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="privateEvent">
+                            <label class="form-check-label" for="privateEvent">Make this a private event</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button type="button" class="btn btn-secondary me-md-2">Save as Draft</button>
+                <button type="submit" class="btn btn-primary">Create Event</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>EventPro</h5>
+                    <p>Your complete event management solution</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="terms-privacy.html" class="text-white">Terms & Conditions</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/events.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const eventForm = document.getElementById("eventForm");
+            
+            // Create Event button functionality
+            eventForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                if (!eventForm.checkValidity()) {
+                    eventForm.classList.add('was-validated');
+                    return;
+                }
+
+                const formData = new FormData(eventForm);
+                const newEvent = {
+                    eventName: formData.get('eventName'),
+                    startDate: formData.get('startDate'),
+                    endDate: formData.get('endDate'),
+                    startTime: formData.get('startTime'),
+                    endTime: formData.get('endTime'),
+                    venueName: formData.get('venueName'),
+                    address: formData.get('address'),
+                    city: formData.get('city'),
+                    state: formData.get('state'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    ticketType: formData.get('ticketType'),
+                    price: formData.get('price'),
+                    totalTickets: formData.get('totalTickets'),
+                    maxTicketsPerPerson: formData.get('maxTicketsPerPerson'),
+                    isVirtual: document.getElementById('virtualEvent').checked,
+                    isPrivate: document.getElementById('privateEvent').checked
+                };
+
+                // Get the file input
+                const fileInput = document.querySelector('input[type="file"]');
+                if (fileInput && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onloadend = function () {
+                        newEvent.bannerImage = reader.result;
+                        saveEvent(newEvent); // This will use the saveEvent from events.js
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    saveEvent(newEvent); // This will use the saveEvent from events.js
+                }
+            });
+    
+            // Bootstrap form validation
+            (function () {
+                'use strict'
+                const forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+    
+            // Image preview functionality
+            document.querySelector('input[type="file"]').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('imagePreview');
+                        preview.innerHTML = `<img src="${e.target.result}" class="preview-image">`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('imagePreview').innerHTML = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

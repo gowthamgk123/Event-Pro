@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analytics - EventPro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .stats-card {
+      border-radius: 15px;
+      transition: transform 0.3s;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stats-card:hover {
+      transform: translateY(-5px);
+    }
+    .chart-container {
+      position: relative;
+      margin: auto;
+      height: 300px;
+      margin-bottom: 30px;
+    }
+    .trend-positive {
+      color: #198754;
+    }
+    .trend-negative {
+      color: #dc3545;
+    }
+    .metric-value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .metric-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">EventPro</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="createEvent.html">Create Event</a></li>
+          <li class="nav-item"><a class="nav-link" href="smart-ticketing.html">Tickets</a></li>
+          <li class="nav-item"><a class="nav-link active" href="analytics.html">Analytics</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-outline-light ms-2" href="login.html">Login</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-light ms-2" href="signup.html">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Event Analytics Dashboard</h1>
+      <a href="index.html" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Home
+      </a>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="stats-card card bg-primary text-white p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-0">Total Events</h6>
+              <h2 class="mb-0" id="totalEvents">--</h2>
+            </div>
+            <i class="fas fa-calendar-alt fa-2x"></i>
+          </div>
+          <div class="mt-3">
+            <small><i class="fas fa-arrow-up"></i> 12% from last month</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card bg-success text-white p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-0">Tickets Sold</h6>
+              <h2 class="mb-0" id="ticketsSold">--</h2>
+            </div>
+            <i class="fas fa-ticket-alt fa-2x"></i>
+          </div>
+          <div class="mt-3">
+            <small><i class="fas fa-arrow-up"></i> 8% from last month</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card bg-info text-white p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-0">Revenue</h6>
+              <h2 class="mb-0" id="revenue">--</h2>
+            </div>
+            <i class="fas fa-dollar-sign fa-2x"></i>
+          </div>
+          <div class="mt-3">
+            <small><i class="fas fa-arrow-up"></i> 15% from last month</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card bg-warning text-white p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-0">Active Users</h6>
+              <h2 class="mb-0" id="activeUsers">--</h2>
+            </div>
+            <i class="fas fa-users fa-2x"></i>
+          </div>
+          <div class="mt-3">
+            <small><i class="fas fa-arrow-up"></i> 5% from last month</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-5">
+      <div class="col-md-8">
+        <div class="card p-4 stats-card">
+          <h5>Ticket Sales Trend</h5>
+          <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 stats-card">
+          <h5>Event Categories</h5>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Stats -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card p-4 stats-card">
+          <h5>Top Performing Events</h5>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Event Name</th>
+                  <th>Tickets Sold</th>
+                  <th>Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tech Conference 2025</td>
+                  <td>450</td>
+                  <td>$13,500</td>
+                </tr>
+                <tr>
+                  <td>Music Festival</td>
+                  <td>380</td>
+                  <td>$11,400</td>
+                </tr>
+                <tr>
+                  <td>Business Summit</td>
+                  <td>290</td>
+                  <td>$8,700</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card p-4 stats-card">
+          <h5>Recent Activity</h5>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">New Event Created</h6>
+                  <small class="text-muted">Tech Workshop 2025</small>
+                </div>
+                <small class="text-muted">2 hours ago</small>
+              </div>
+            </div>
+            <div class="list-group-item border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">Ticket Sale Milestone</h6>
+                  <small class="text-muted">1000 tickets sold for Music Festival</small>
+                </div>
+                <small class="text-muted">5 hours ago</small>
+              </div>
+            </div>
+            <div class="list-group-item border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">New Revenue Record</h6>
+                  <small class="text-muted">Monthly revenue exceeded $40K</small>
+                </div>
+                <small class="text-muted">1 day ago</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Dynamic Data Script -->
+  <script>
+    function randomDelta(base, variance = 0.1) {
+      const delta = base * variance;
+      return Math.round(base + (Math.random() * delta * 2 - delta));
+    }
+
+    const totalEvents = randomDelta(24, 0.2);
+    const ticketsSold = randomDelta(1234, 0.2);
+    const revenue = (randomDelta(45200, 0.15) / 1000).toFixed(1); // in K
+    const activeUsers = randomDelta(892, 0.1);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("totalEvents").textContent = totalEvents;
+      document.getElementById("ticketsSold").textContent = ticketsSold.toLocaleString();
+      document.getElementById("revenue").textContent = `$${revenue}K`;
+      document.getElementById("activeUsers").textContent = activeUsers.toLocaleString();
+    });
+
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Ticket Sales',
+          data: Array.from({ length: 6 }, () => randomDelta(1000, 0.3)),
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Tech', 'Music', 'Business', 'Sports', 'Other'],
+        datasets: [{
+          data: [
+            randomDelta(30, 0.2),
+            randomDelta(25, 0.2),
+            randomDelta(20, 0.2),
+            randomDelta(15, 0.2),
+            randomDelta(10, 0.2)
+          ],
+          backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6c757d']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  </script>
+</body>
+</html>

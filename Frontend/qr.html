@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QR Code Scanner</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #121a2f; /* dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #e0e6f0;
+  }
+
+  .scanner-container {
+    background: #1f2b46;
+    border-radius: 15px;
+    padding: 30px 25px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    width: 90%;
+    max-width: 480px;
+    border: 2px solid #334a74;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #dbe9ff;
+  }
+
+  #video-container {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 2px solid black;
+    background: #0e1a33;
+  }
+
+  #qr-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scan-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 75%;
+    height: 60%;
+    border: 2px dashed #99bfff;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .scan-animator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    animation: scan-line 2s infinite alternate;
+  }
+
+  @keyframes scan-line {
+    0% { transform: translateY(0%); }
+    100% { transform: translateY(calc(100% - 4px)); }
+  }
+
+  #scan-button {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+  }
+
+  #scan-button:hover {
+    background: linear-gradient(to right, #0052d4, #4364f7);
+  }
+
+  #scan-button:disabled {
+    background: #555c70;
+    cursor: not-allowed;
+  }
+
+  #result-container {
+    margin-top: 25px;
+    background: #162136;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    text-align: left;
+    border: 1px solid #334a74;
+    color: #dbe9ff;
+  }
+
+  #result-container strong {
+    color: #ffffff;
+  }
+
+  .error-message {
+    margin-top: 15px;
+    color: #ff6b6b;
+    font-weight: bold;
+  }
+
+  @media (max-width: 500px) {
+    .scanner-container {
+      padding: 20px 15px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="scanner-container">
+    <h1>QR Code Scanner</h1>
+
+    <div id="video-container">
+      <video id="qr-video" class="hidden"></video>
+      <div class="scan-overlay">
+        <div class="scan-animator"></div>
+      </div>
+    </div>
+
+    <button id="scan-button">Start Scanning</button>
+
+    <div id="result-container" style="display: none;">
+      <strong>Scan Result:</strong> <span id="result-text"></span>
+    </div>
+
+    <div id="error-message" class="error-message" style="display: none;"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script>
+    const videoElement = document.getElementById('qr-video');
+    const scanButton = document.getElementById('scan-button');
+    const resultContainer = document.getElementById('result-container');
+    const resultText = document.getElementById('result-text');
+    const errorMessageDiv = document.getElementById('error-message');
+    const videoContainer = document.getElementById('video-container');
+    let stream;
+    let isScanning = false;
+
+    scanButton.addEventListener('click', () => {
+      if (!isScanning) {
+        startCamera();
+      } else {
+        stopCamera();
+      }
+    });
+
+    async function startCamera() {
+      isScanning = true;
+      scanButton.textContent = 'Stop Scanning';
+      scanButton.disabled = true;
+      errorMessageDiv.style.display = 'none';
+      resultContainer.style.display = 'none';
+      videoElement.classList.remove('hidden');
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        videoElement.srcObject = stream;
+        videoElement.onloadedmetadata = () => {
+          videoElement.play();
+          scanButton.disabled = false;
+          requestAnimationFrame(scanQRCode);
+        };
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+        errorMessageDiv.textContent = 'Error accessing camera. Please make sure you have granted permission.';
+        errorMessageDiv.style.display = 'block';
+        scanButton.textContent = 'Start Scanning';
+        scanButton.disabled = false;
+        videoElement.classList.add('hidden');
+        isScanning = false;
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+      }
+      scanButton.textContent = 'Start Scanning';
+      isScanning = false;
+      videoElement.classList.add('hidden');
+    }
+
+    function scanQRCode() {
+      if (!isScanning) return;
+
+      if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: 'dontInvert',
+        });
+
+        if (code) {
+          resultText.textContent = code.data;
+          resultContainer.style.display = 'block';
+          stopCamera();
+        } else {
+          requestAnimationFrame(scanQRCode);
+        }
+      } else {
+        requestAnimationFrame(scanQRCode);
+      }
+    }
+  </script>
+</body>
+</html>

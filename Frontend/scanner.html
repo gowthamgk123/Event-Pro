@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Scanner</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #d0e7ff, #ffffff);
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    #video {
+      width: 320px;
+      height: 240px;
+      margin: 20px auto;
+      border: 2px solid #ddd;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: green;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 1em;
+      color: red; /* Error messages will be red */
+    }
+  </style>
+</head>
+<body>
+  <h2>QR Code Scanner</h2>
+  <video id="video" autoplay playsinline></video>
+  <div id="result"></div>
+  <div id="status">Status: Loading OpenCV...</div>
+
+  <script src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript" onload="onOpenCvReady();"></script>
+
+  <script>
+    let video = document.getElementById('video');
+    let resultDiv = document.getElementById('result');
+    let statusDiv = document.getElementById('status');
+    let streaming = false;
+    let src, dst, gray, qrCodeDetector;
+
+    function onOpenCvReady() {
+      cv['onRuntimeInitialized'] = () => {
+        statusDiv.innerText = "OpenCV loaded. Requesting camera access...";
+        requestCameraAccess();
+      };
+    }
+
+    function requestCameraAccess() {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+        .then(function(stream) {
+          video.srcObject = stream;
+          video.play();
+          streaming = true;
+          qrCodeDetector = new cv.QRCodeDetector();
+          statusDiv.innerText = "Camera access granted. Scanning...";
+          requestAnimationFrame(processVideo);
+        })
+        .catch(function(err) {
+          statusDiv.innerText = "❌ Error accessing camera: " + err;
+          console.error("Camera access error:", err); // Log to console for debugging
+        });
+    }
+
+    function processVideo() {
+      if (streaming) {
+        try {
+          if (!src) {
+            src = new cv.Mat(video.videoHeight, video.videoWidth, cv.CV_8UC4);
+            dst = new cv.Mat(video.videoHeight, video.videoWidth, cv.CV_8UC4);
+            gray = new cv.Mat();
+          }
+
+          src.data.set(new Uint8Array(video));
+          cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+
+          let points = new cv.Mat();
+          let decodedInfo = qrCodeDetector.detectAndDecode(gray, points);
+
+          if (decodedInfo) {
+            if (decodedInfo !== "") {
+              resultDiv.innerText = "✅ QR Code Detected:\n" + decodedInfo;
+              streaming = false;
+              video.pause();
+              if (video.srcObject) {
+                video.srcObject.getVideoTracks().forEach(track => track.stop());
+              }
+            }
+          }
+
+          requestAnimationFrame(processVideo);
+        } catch (e) {
+          console.error("Video processing error:", e);
+          statusDiv.innerText = "Error during video processing.";
+          requestAnimationFrame(processVideo);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

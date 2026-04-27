@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../int428_patent/interface"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "TICKET_BOOKING_SYSTEM"
+	}
+}

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History - EventPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Custom CSS for the message box */
+        #message-box {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f0fdf4;
+            color: #15803d;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #16a34a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        #message-box.show {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-inter">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">EventPro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="index.html#events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="smart-ticketing.html">Tickets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="createEvent.html">Create Event</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="signup.html">Sign Up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6 sm:p-10 md:p-12 mt-5">
+        <div id="message-box" class="hidden"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+            <h1 class="text-2xl font-semibold text-gray-800">Booking History</h1>
+            <a href="smart-ticketing.html" class="btn btn-primary">
+                <i class="fas fa-ticket-alt me-2"></i>Buy New Tickets
+            </a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                    <label for="start-date" class="block text-sm font-medium text-gray-700">Start Date:</label>
+                    <input type="date" id="start-date" class="shadow-sm border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 sm:max-w-xs">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                    <label for="end-date" class="block text-sm font-medium text-gray-700">End Date:</label>
+                    <input type="date" id="end-date" class="shadow-sm border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 sm:max-w-xs">
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                    <label for="status-filter" class="block text-sm font-medium text-gray-700">Status:</label>
+                    <select id="status-filter" class="shadow-sm border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 sm:max-w-xs">
+                        <option value="">All Statuses</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Refunded">Refunded</option>
+                    </select>
+                </div>
+
+                <div class="flex-1 flex flex-col sm:flex-row gap-2 sm:items-center">
+                    <label for="search" class="block text-sm font-medium text-gray-700">Search:</label>
+                    <input type="text" id="search" placeholder="Search by ID, Event..." class="shadow-sm border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 w-full sm:w-auto">
+                </div>
+
+                <div class="self-start">
+                    <button id="filter-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-300">
+                        Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+            <table id="booking-table" class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event/Service</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking Date & Time</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event/Service Date & Time</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="9" class="px-6 py-4 text-center text-gray-500">No bookings found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="mt-6 flex justify-center space-x-2">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>EventPro</h5>
+                    <p>Your complete event management solution</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="terms-privacy.html" class="text-white">Terms & Conditions</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Sample booking data (replace with your actual data source)
+        const bookings = [
+            {
+                bookingId: "#BK001234",
+                eventService: "Avengers: Endgame Movie Ticket",
+                bookingDateTime: "2024-04-20 10:30 AM",
+                eventServiceDateTime: "2024-04-25 02:00 PM",
+                location: "PVR Cinemas, Ambience Mall, Gurgaon",
+                quantity: 2,
+                totalAmount: "₹500.00",
+                status: "Confirmed",
+                actions: ["View Details", "Download Ticket", "Cancel"]
+            },
+            {
+                bookingId: "#FL005678",
+                eventService: "Delhi to Mumbai Flight",
+                bookingDateTime: "2024-04-15 04:45 PM",
+                eventServiceDateTime: "2024-05-01 08:00 AM",
+                location: "Indira Gandhi International Airport, Delhi",
+                quantity: 1,
+                totalAmount: "₹4,500.00",
+                status: "Confirmed",
+                actions: ["View Details", "Download Boarding Pass", "Manage Booking"]
+            },
+            {
+                bookingId: "#HT009101",
+                eventService: "Weekend Getaway at The Grand Resort",
+                bookingDateTime: "2024-04-10 11:12 AM",
+                eventServiceDateTime: "2024-05-10 - 2024-05-12",
+                location: "The Grand Resort, Goa",
+                quantity: "2 Guests",
+                totalAmount: "₹12,000.00",
+                status: "Completed",
+                actions: ["View Details", "Leave Review"]
+            },
+             {
+                bookingId: "#BK001235",
+                eventService: "Spider-Man: No Way Home Movie Ticket",
+                bookingDateTime: "2024-03-20 10:30 AM",
+                eventServiceDateTime: "2024-03-25 02:00 PM",
+                location: "PVR Cinemas, Ambience Mall, Gurgaon",
+                quantity: 3,
+                totalAmount: "₹750.00",
+                status: "Cancelled",
+                actions: ["View Details", "Request Refund"]
+            },
+            {
+                bookingId: "#FL005679",
+                eventService: "Mumbai to Delhi Flight",
+                bookingDateTime: "2024-03-15 04:45 PM",
+                eventServiceDateTime: "2024-04-01 08:00 AM",
+                location: "Chhatrapati Shivaji Maharaj International Airport, Mumbai",
+                quantity: 1,
+                totalAmount: "₹5,500.00",
+                status: "Confirmed",
+                actions: ["View Details", "Download Boarding Pass", "Manage Booking"]
+            },
+            {
+                bookingId: "#HT009102",
+                eventService: "Honeymoon Package at The Beach Hotel",
+                bookingDateTime: "2024-03-10 11:12 AM",
+                eventServiceDateTime: "2024-04-10 - 2024-04-12",
+                location: "The Beach Hotel, Goa",
+                quantity: "2 Guests",
+                totalAmount: "₹15,000.00",
+                status: "Completed",
+                actions: ["View Details", "Leave Review"]
+            },
+            {
+                bookingId: "#BK001236",
+                eventService: "Oppenheimer Movie Ticket",
+                bookingDateTime: "2024-02-20 10:30 AM",
+                eventServiceDateTime: "2024-02-25 02:00 PM",
+                location: "PVR Cinemas, Select Citywalk, Delhi",
+                quantity: 1,
+                totalAmount: "₹250.00",
+                status: "Confirmed",
+                actions: ["View Details", "Download Ticket", "Cancel"]
+            },
+            {
+                bookingId: "#FL005680",
+                eventService: "Delhi to Bangalore Flight",
+                bookingDateTime: "2024-02-15 04:45 PM",
+                eventServiceDateTime: "2024-03-01 08:00 AM",
+                location: "Indira Gandhi International Airport, Delhi",
+                quantity: 1,
+                totalAmount: "₹6,000.00",
+                status: "Cancelled",
+                actions: ["View Details", "Request Refund"]
+            },
+            {
+                bookingId: "#HT009103",
+                eventService: "Family Trip to Wonderla Amusement Park",
+                bookingDateTime: "2024-02-10 11:12 AM",
+                eventServiceDateTime: "2024-03-10",
+                location: "Wonderla Amusement Park, Bangalore",
+                quantity: "4 Guests",
+                totalAmount: "₹10,000.00",
+                status: "Completed",
+                actions: ["View Details", "Leave Review"]
+            }
+        ];
+
+        const bookingTable = document.getElementById("booking-table").getElementsByTagName("tbody")[0];
+        const paginationContainer = document.getElementById("pagination");
+        const messageBox = document.getElementById("message-box");
+
+        const recordsPerPage = 5;
+        let currentPage = 1;
+        let filteredBookings = [];
+
+        function showMessage(message, type = 'success') {
+            messageBox.textContent = message;
+            messageBox.className = `fixed top-4 left-1/2 transform -translate-x-1/2 bg-${type === 'success' ? 'green' : 'red'}-100 text-${type === 'success' ? 'green' : 'red'}-700 border border-${type === 'success' ? 'green' : 'red'}-400 px-4 py-2 rounded shadow-md z-50`;
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000); // Auto-hide after 3 seconds
+        }
+
+        function getFilteredBookings() {
+            const startDateInput = document.getElementById("start-date").value;
+            const endDateInput = document.getElementById("end-date").value;
+            const statusFilter = document.getElementById("status-filter").value;
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+
+            const startDate = startDateInput ? new Date(startDateInput) : null;
+            const endDate = endDateInput ? new Date(endDateInput) : null;
+
+            filteredBookings = bookings.filter(booking => {
+                const bookingDate = new Date(booking.bookingDateTime.split(" ")[0]);
+
+                const dateInRange = (!startDate || bookingDate >= startDate) &&
+                                    (!endDate || bookingDate <= endDate);
+
+                const statusMatch = !statusFilter || booking.status === statusFilter;
+
+                const searchMatch = booking.bookingId.toLowerCase().includes(searchTerm) ||
+                                    booking.eventService.toLowerCase().includes(searchTerm);
+
+                return dateInRange && statusMatch && searchMatch;
+            });
+            return filteredBookings;
+        }
+
+        function displayBookings(page) {
+            const bookingsToDisplay = getFilteredBookings();
+            bookingTable.innerHTML = ""; // Clear the table
+
+            if (bookingsToDisplay.length === 0) {
+                bookingTable.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">No bookings found.</td></tr>';
+                paginationContainer.innerHTML = "";
+                return;
+            }
+
+            const startIndex = (page - 1) * recordsPerPage;
+            const endIndex = startIndex + recordsPerPage;
+            const pageBookings = bookingsToDisplay.slice(startIndex, endIndex);
+
+            pageBookings.forEach(booking => {
+                const row = bookingTable.insertRow();
+                const bookingIdCell = row.insertCell();
+                const eventServiceCell = row.insertCell();
+                const bookingDateTimeCell = row.insertCell();
+                const eventServiceDateTimeCell = row.insertCell();
+                const locationCell = row.insertCell();
+                const quantityCell = row.insertCell();
+                const totalAmountCell = row.insertCell();
+                const statusCell = row.insertCell();
+                const actionsCell = row.insertCell();
+
+                bookingIdCell.textContent = booking.bookingId;
+                eventServiceCell.textContent = booking.eventService;
+                bookingDateTimeCell.textContent = booking.bookingDateTime;
+                eventServiceDateTimeCell.textContent = booking.eventServiceDateTime;
+                locationCell.textContent = booking.location;
+                quantityCell.textContent = booking.quantity;
+                totalAmountCell.textContent = booking.totalAmount;
+                statusCell.textContent = booking.status;
+
+                actionsCell.innerHTML = booking.actions.map(action => {
+                    if (action === "Cancel") {
+                        return `<button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-xs mr-1" onclick="cancelBooking('${booking.bookingId}')">Cancel</button>`;
+                    } else if (action === "Request Refund") {
+                        return `<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs mr-1" onclick="requestRefund('${booking.bookingId}')">Request Refund</button>`;
+                    }
+                    else {
+                      return `<button class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-xs mr-1">${action}</button>`;
+                    }
+                }).join("");
+            });
+
+            displayPagination(bookingsToDisplay.length);
+        }
+
+        function displayPagination(totalRecords) {
+            const totalPages = Math.ceil(totalRecords / recordsPerPage);
+            paginationContainer.innerHTML = ""; // Clear existing pagination
+
+            if (totalPages <= 1) return; // Don't show pagination if there's only one page
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement("button");
+                pageButton.textContent = i;
+                pageButton.className = `py-2 px-4 rounded-md text-sm font-semibold focus:outline-none ${currentPage === i ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`;
+                pageButton.addEventListener("click", () => {
+                    currentPage = i;
+                    displayBookings(currentPage);
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+
+        function cancelBooking(bookingId) {
+            // In a real application, you would send a request to your server to cancel the booking
+            // Here, we just update the status in the local data for demonstration purposes
+            const bookingToCancel = bookings.find(booking => booking.bookingId === bookingId);
+            if (bookingToCancel) {
+                if (bookingToCancel.status === "Cancelled") {
+                    showMessage(`Booking ${bookingId} is already cancelled.`, 'info');
+                    return;
+                }
+                bookingToCancel.status = "Cancelled";
+                showMessage(`Booking ${bookingId} has been cancelled successfully.`, 'success');
+                displayBookings(currentPage); // Refresh the view
+            } else {
+                showMessage(`Booking ${bookingId} not found.`, 'error');
+            }
+        }
+
+        function requestRefund(bookingId) {
+            const bookingToRefund = bookings.find(booking => booking.bookingId === bookingId);
+             if (bookingToRefund) {
+                if (bookingToRefund.status !== "Cancelled") {
+                    showMessage(`Booking ${bookingId} must be cancelled before requesting a refund.`, 'error');
+                    return;
+                }
+                bookingToRefund.status = "Refunded";
+                showMessage(`Refund requested for Booking ${bookingId}.`, 'success');
+                displayBookings(currentPage);
+             } else {
+                showMessage(`Booking ${bookingId} not found.`, 'error');
+            }
+        }
+
+        // Event Listeners
+        document.getElementById("filter-button").addEventListener("click", () => {
+            currentPage = 1; // Reset to the first page when filtering
+            displayBookings(currentPage);
+        });
+
+        // Initial display
+        displayBookings(currentPage);
+    </script>
+</body>
+</html>
